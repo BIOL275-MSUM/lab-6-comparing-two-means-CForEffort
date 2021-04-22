@@ -1,7 +1,6 @@
 ---
 title: "Lab 6 Comparing two means"
-author: ""
-date: "`r Sys.Date()`"
+author: "Faith Rude"
 output: github_document
 ---
 
@@ -13,28 +12,59 @@ The data is provided in your GitHub repository.
 
 For each question below, write a sentence answering the question and show the code you used to come up with the answer, if applicable.
 
+## Read in the data and load packages
+
+```{r}
+library(tidyverse)
+
+fish <- read_csv("chap12q19ElectricFish.csv")
+```
+
+
 ## Question A
 
 > Test the hypothesis that the tributaries have no effect on the number of species of electric fish.
 
 ```{r t-test}
+fish_long <- 
+  pivot_longer(fish, speciesUpstream:speciesDownstream,
+               names_to = "location",
+               values_to = "species") %>% 
+  mutate(location = str_remove(location, c("species"))) %>% 
+  print()
 
+fish_ttest <- t.test(species ~ location, data = fish_long)
+
+fish_ttest
 ```
 
-ANSWER
+To do this, the t-test data can be analyzed, looking specifically at the p-value. The p-value was 0.5596. This is larger than the alpha value of 0.05 meaning you can not reject the null hypothesis. Thus, the tributaries have no significant effect on the number of species of electric fish.
 
 ## Question B
 
 > What is the difference in the mean numbers of species between areas upstream and downstream of a tributary? What is the 95% confidence interval of this difference in means?
 
-ANSWER
+To find the upper and lower mean values, the previously run t-test data was used. Then the upper and lower mean values could be subtracted to find the mean difference. The resulting difference is 1.83334 species.
+
+The 95% confidence interval of the mean difference is also listed in the t-test write up and is -4.587031 to 8.253697.
 
 ## Question C
 
 > State the assumptions that you had to make to complete parts (A) and (B). Create a graph to assess whether one of those assumptions was met.
 
-ANSWER
+The assumptions for both part A and B require the two sample populations (up and downstream) to have a normal distribution and the individuals being selected are done so randomly.
+
+To test this, a histogram was created to display the distributions of the species and determine if the distributions were normal. Unfortunately in the case of this study, neither population appears to have a normal distribution. However, this could be attributed to a low sample size. Given this consideration, the data is likely to have a normal distribution if a larger sample was taken.
 
 ```{r}
-
+fish_long %>% 
+  ggplot(aes(x = species)) +
+  geom_histogram(
+    aes(fill = location), 
+    bins = 8, 
+    alpha = 0.5, 
+    position = "identity"
+  ) +
+  scale_fill_manual(values = c("darkorange","cyan4")) +
+  theme_minimal()
 ```

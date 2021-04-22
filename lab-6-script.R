@@ -18,12 +18,21 @@ fish_long <-
   mutate(location = str_remove(location, c("species"))) %>% 
   print()
 
+# do stuff ----------------------------------------------------------------
 
-# Question A t-test -------------------------------------------------------
+fish_ttest <- t.test(species ~ location, data = fish_long)
+fish_ttest$estimate
+fish_ttest
 
+## Graph both
 
-# Question B difference in means -----------------------------------------
-
-
-# Question C histograms --------------------------------------------------
-
+fish_long %>% 
+  ggplot(aes(x = species)) +
+  geom_histogram(
+    aes(fill = location), 
+    bins = 8, 
+    alpha = 0.5, 
+    position = "identity"
+  ) +
+  scale_fill_manual(values = c("darkorange","cyan4")) +
+  theme_minimal()

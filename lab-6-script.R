@@ -36,3 +36,30 @@ fish_long %>%
   ) +
   scale_fill_manual(values = c("darkorange","cyan4")) +
   theme_minimal()
+
+## Read crab data
+
+crab <- read_csv("chap15q27FiddlerCrabFans.csv")
+crab
+
+## Graph the crab data
+
+crab %>% 
+  ggplot(aes(x = bodyTemperature)) +
+  geom_histogram(
+    aes(fill = crabType), 
+    bins = 8, 
+    alpha = 0.5, 
+    position = "identity"
+  ) +
+  labs(x = "Body Temperature", y = "Species Count") +
+  scale_fill_manual(values = c("darkorange","cyan4", "red", "blue")) +
+  theme_minimal()
+
+
+## Anova for crabs
+
+ANOVA <- aov(bodyTemperature ~ crabType, data = crab)
+ANOVA
+sumAN <- summary(ANOVA)
+sumAN

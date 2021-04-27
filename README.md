@@ -141,3 +141,108 @@ fish_long %>%
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+## Question D
+
+> Graph the distribution of body temperatures for each crab type.
+
+First read in the data for the crabs.
+
+``` r
+crab <- read_csv("chap15q27FiddlerCrabFans.csv")
+```
+
+    ## 
+    ## -- Column specification --------------------------------------------------------
+    ## cols(
+    ##   crabType = col_character(),
+    ##   bodyTemperature = col_double()
+    ## )
+
+``` r
+crab
+```
+
+    ## # A tibble: 85 x 2
+    ##    crabType bodyTemperature
+    ##    <chr>              <dbl>
+    ##  1 female               1.9
+    ##  2 female               1.6
+    ##  3 female               1.4
+    ##  4 female               1.1
+    ##  5 female               1.6
+    ##  6 female               1.8
+    ##  7 female               1.9
+    ##  8 female               1.7
+    ##  9 female               1.5
+    ## 10 female               1.8
+    ## # ... with 75 more rows
+
+Then the graph can be created for the different types of crabs.
+
+``` r
+crab %>% 
+  ggplot(aes(x = bodyTemperature)) +
+  geom_histogram(
+    aes(fill = crabType), 
+    bins = 8, 
+    alpha = 0.5, 
+    position = "identity"
+  ) +
+ labs(x = "Body Temperature", y = "Species Count") +
+  scale_fill_manual(values = c("darkorange","cyan4", "red", "blue")) +
+  theme_minimal()
+```
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_bin).
+
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+## Question E
+
+> Does body temperature varies among crab types? State the null and
+> alternative hypothesis, conduct and ANOVA, and interpret the results.
+
+In the case of this study, the null hypothesis is that there is no
+difference in body temperature based on type of crab. The alternate
+hypothesis is that the body temperatures would vary based on the type of
+crab being observed. To test this, an anova can be run.
+
+``` r
+ANOVA <- aov(bodyTemperature ~ crabType, data = crab)
+ANOVA
+```
+
+    ## Call:
+    ##    aov(formula = bodyTemperature ~ crabType, data = crab)
+    ## 
+    ## Terms:
+    ##                 crabType Residuals
+    ## Sum of Squares  2.641310  3.467619
+    ## Deg. of Freedom        3        80
+    ## 
+    ## Residual standard error: 0.2081952
+    ## Estimated effects may be unbalanced
+    ## 1 observation deleted due to missingness
+
+``` r
+sumAN <- summary(ANOVA)
+sumAN
+```
+
+    ##             Df Sum Sq Mean Sq F value Pr(>F)    
+    ## crabType     3  2.641  0.8804   20.31  7e-10 ***
+    ## Residuals   80  3.468  0.0433                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 1 observation deleted due to missingness
+
+From the Anova, the sum of squares that we get are 2.64 from crab type
+and 3.47 for residuals. There are 3 degrees of freedom in crab type and
+80 degrees of freedom in the residual. The SE of the residual is 0.21.
+The mean squared value is 0.88 for the crabType and 0.04 for the
+residuals. The F value is 20.31 and the Pr(&gt;F) value is 7e-10 \*\*\*.
+
+Based on the ANOVA you can reject the null hypothesis due to P being so
+small that regardless of the alpha value you choose your p value (7e-10)
+will be smaller.

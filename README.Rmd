@@ -68,3 +68,48 @@ fish_long %>%
   scale_fill_manual(values = c("darkorange","cyan4")) +
   theme_minimal()
 ```
+
+## Question D
+
+> Graph the distribution of body temperatures for each crab type.
+
+First read in the data for the crabs.
+
+```{r}
+crab <- read_csv("chap15q27FiddlerCrabFans.csv")
+crab
+```
+
+Then the graph can be created for the different types of crabs.
+
+```{r}
+crab %>% 
+  ggplot(aes(x = bodyTemperature)) +
+  geom_histogram(
+    aes(fill = crabType), 
+    bins = 8, 
+    alpha = 0.5, 
+    position = "identity"
+  ) +
+ labs(x = "Body Temperature", y = "Species Count") +
+  scale_fill_manual(values = c("darkorange","cyan4", "red", "blue")) +
+  theme_minimal()
+```
+
+## Question E
+
+> Does body temperature varies among crab types? State the null and alternative hypothesis, conduct and ANOVA, and interpret the results.
+
+In the case of this study, the null hypothesis is that there is no difference in body temperature based on type of crab. The alternate hypothesis is that the body temperatures would vary based on the type of crab being observed. To test this, an anova can be run.
+
+```{r}
+ANOVA <- aov(bodyTemperature ~ crabType, data = crab)
+ANOVA
+sumAN <- summary(ANOVA)
+sumAN
+```
+
+From the Anova, the sum of squares that we get are 2.64 from crab type and 3.47
+for residuals. There are 3 degrees of freedom in crab type and 80 degrees of freedom in the residual. The SE of the residual is 0.21. The mean squared value is 0.88 for the crabType and 0.04 for the residuals. The F value is 20.31 and the Pr(>F) value is 7e-10 ***.
+
+Based on the ANOVA you can reject the null hypothesis due to P being so small that regardless of the alpha value you choose your p value (7e-10) will be smaller.
